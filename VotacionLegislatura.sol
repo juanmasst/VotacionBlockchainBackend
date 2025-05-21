@@ -15,7 +15,6 @@ contract VotacionLegislatura {
         uint256 abstenciones;
         uint256 ausentes;
         bool activa;
-        mapping(address => EstadoVoto) votosLegisladores;
     }
     
     // Estructura para representar una sesión
@@ -24,13 +23,17 @@ contract VotacionLegislatura {
         string fecha;
         string descripcion;
         bool activa;
-        Ley[] leyes;
+        uint256[] leyesIds; // Array de IDs de leyes en lugar de array de Ley
     }
     
     // Variables de estado
     address public administrador;
     mapping(address => bool) public legisladores;
     Sesion[] public sesiones;
+    
+    // Mappings para almacenar las leyes y votos
+    mapping(uint256 => mapping(uint256 => Ley)) public leyes; // sesionId => leyId => Ley
+    mapping(uint256 => mapping(uint256 => mapping(address => EstadoVoto))) public votosLegisladores; // sesionId => leyId => legislador => voto
     
     // Eventos
     event LegisladorRegistrado(address legislador);
@@ -83,7 +86,7 @@ contract VotacionLegislatura {
             fecha: _fecha,
             descripcion: _descripcion,
             activa: true,
-            leyes: new Ley[](0)
+            leyesIds: new uint256[](0)
         }));
         emit SesionCreada(idSesion, _fecha);
     }
@@ -93,13 +96,21 @@ contract VotacionLegislatura {
         string memory _titulo,
         string memory _descripcion
     ) public soloAdministrador sesionActiva(_idSesion) {
-        Ley storage nuevaLey = sesiones[_idSesion].leyes.push();
-        nuevaLey.id = sesiones[_idSesion].leyes.length - 1;
-        nuevaLey.titulo = _titulo;
-        nuevaLey.descripcion = _descripcion;
-        nuevaLey.activa = true;
+        uint256 idLey = sesiones[_idSesion].leyesIds.length;
         
-        emit LeyAgregada(_idSesion, nuevaLey.id, _titulo);
+        leyes[_idSesion][idLey] = Ley({
+            id: idLey,
+            titulo: _titulo,
+            descripcion: _descripcion,
+            votosAFavor: 0,
+            votosEnContra: 0,
+            abstenciones: 0,
+            ausentes: 0,
+            activa: true
+        });
+        
+        sesiones[_idSesion].leyesIds.push(idLey);
+        emit LeyAgregada(_idSesion, idLey, _titulo);
     }
     
     // Funciones de votación
@@ -108,19 +119,19 @@ contract VotacionLegislatura {
         uint256 _idLey,
         EstadoVoto _estadoVoto
     ) public soloLegislador sesionActiva(_idSesion) {
-        require(_idLey < sesiones[_idSesion].leyes.length, "Ley no existe");
-        Ley storage ley = sesiones[_idSesion].leyes[_idLey];
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Ley no existe");
+        Ley storage ley = leyes[_idSesion][_idLey];
         require(ley.activa, "Ley no esta activa");
         
         // Actualizar conteo de votos anteriores
-        EstadoVoto votoAnterior = ley.votosLegisladores[msg.sender];
+        EstadoVoto votoAnterior = votosLegisladores[_idSesion][_idLey][msg.sender];
         if (votoAnterior == EstadoVoto.A_FAVOR) ley.votosAFavor--;
         else if (votoAnterior == EstadoVoto.EN_CONTRA) ley.votosEnContra--;
         else if (votoAnterior == EstadoVoto.ABSTENCION) ley.abstenciones--;
         else if (votoAnterior == EstadoVoto.AUSENTE) ley.ausentes--;
         
         // Registrar nuevo voto
-        ley.votosLegisladores[msg.sender] = _estadoVoto;
+        votosLegisladores[_idSesion][_idLey][msg.sender] = _estadoVoto;
         
         // Actualizar conteo de nuevos votos
         if (_estadoVoto == EstadoVoto.A_FAVOR) ley.votosAFavor++;
@@ -144,9 +155,9 @@ contract VotacionLegislatura {
         uint256 ausentes
     ) {
         require(_idSesion < sesiones.length, "Sesion no existe");
-        require(_idLey < sesiones[_idSesion].leyes.length, "Ley no existe");
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Ley no existe");
         
-        Ley storage ley = sesiones[_idSesion].leyes[_idLey];
+        Ley storage ley = leyes[_idSesion][_idLey];
         return (
             ley.votosAFavor,
             ley.votosEnContra,
@@ -161,8 +172,8 @@ contract VotacionLegislatura {
         address _legislador
     ) public view returns (EstadoVoto) {
         require(_idSesion < sesiones.length, "Sesion no existe");
-        require(_idLey < sesiones[_idSesion].leyes.length, "Ley no existe");
-        return sesiones[_idSesion].leyes[_idLey].votosLegisladores[_legislador];
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Ley no existe");
+        return votosLegisladores[_idSesion][_idLey][_legislador];
     }
     
     function obtenerCantidadSesiones() public view returns (uint256) {
@@ -171,6 +182,18 @@ contract VotacionLegislatura {
     
     function obtenerCantidadLeyes(uint256 _idSesion) public view returns (uint256) {
         require(_idSesion < sesiones.length, "Sesion no existe");
-        return sesiones[_idSesion].leyes.length;
+        return sesiones[_idSesion].leyesIds.length;
+    }
+    
+    function obtenerLey(uint256 _idSesion, uint256 _idLey) public view returns (
+        uint256 id,
+        string memory titulo,
+        string memory descripcion,
+        bool activa
+    ) {
+        require(_idSesion < sesiones.length, "Sesion no existe");
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Ley no existe");
+        Ley storage ley = leyes[_idSesion][_idLey];
+        return (ley.id, ley.titulo, ley.descripcion, ley.activa);
     }
 } 
