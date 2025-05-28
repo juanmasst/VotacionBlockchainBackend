@@ -120,20 +120,20 @@ contract VotacionLegislatura {
         EstadoVoto _estadoVoto
     ) public soloLegislador sesionActiva(_idSesion) {
         // Verificación de que el legislador está registrado (aunque ya está en el modificador, lo dejamos explícito)
-        require(legisladores[msg.sender], "Error: La cuenta no está registrada como legislador");
+        require(legisladores[msg.sender], "Error: La cuenta no esta registrada como legislador");
         
         // Verificación de que la sesión existe
-        require(_idSesion < sesiones.length, "Error: La sesión no existe");
+        require(_idSesion < sesiones.length, "Error: La sesion no existe");
         
         // Verificación de que la sesión está activa (aunque ya está en el modificador, lo dejamos explícito)
-        require(sesiones[_idSesion].activa, "Error: La sesión no está activa");
+        require(sesiones[_idSesion].activa, "Error: La sesion no esta activa");
         
         // Verificación de que la ley existe en la sesión
-        require(_idLey < sesiones[_idSesion].leyesIds.length, "Error: La ley no existe en esta sesión");
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Error: La ley no existe en esta sesion");
         
         // Verificación de que la ley está activa
         Ley storage ley = leyes[_idSesion][_idLey];
-        require(ley.activa, "Error: La ley no está activa");
+        require(ley.activa, "Error: La ley no esta activa");
         
         // Verificación de que el estado de voto es válido
         require(
@@ -142,7 +142,7 @@ contract VotacionLegislatura {
             _estadoVoto == EstadoVoto.ABSTENCION || 
             _estadoVoto == EstadoVoto.AUSENTE || 
             _estadoVoto == EstadoVoto.PRESENTE,
-            "Error: Estado de voto inválido"
+            "Error: Estado de voto invalido"
         );
         
         // Obtener el voto anterior
