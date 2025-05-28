@@ -119,16 +119,52 @@ contract VotacionLegislatura {
         uint256 _idLey,
         EstadoVoto _estadoVoto
     ) public soloLegislador sesionActiva(_idSesion) {
-        require(_idLey < sesiones[_idSesion].leyesIds.length, "Ley no existe");
+        // Verificación de que el legislador está registrado (aunque ya está en el modificador, lo dejamos explícito)
+        require(legisladores[msg.sender], "Error: La cuenta no está registrada como legislador");
+        
+        // Verificación de que la sesión existe
+        require(_idSesion < sesiones.length, "Error: La sesión no existe");
+        
+        // Verificación de que la sesión está activa (aunque ya está en el modificador, lo dejamos explícito)
+        require(sesiones[_idSesion].activa, "Error: La sesión no está activa");
+        
+        // Verificación de que la ley existe en la sesión
+        require(_idLey < sesiones[_idSesion].leyesIds.length, "Error: La ley no existe en esta sesión");
+        
+        // Verificación de que la ley está activa
         Ley storage ley = leyes[_idSesion][_idLey];
-        require(ley.activa, "Ley no esta activa");
+        require(ley.activa, "Error: La ley no está activa");
+        
+        // Verificación de que el estado de voto es válido
+        require(
+            _estadoVoto == EstadoVoto.A_FAVOR || 
+            _estadoVoto == EstadoVoto.EN_CONTRA || 
+            _estadoVoto == EstadoVoto.ABSTENCION || 
+            _estadoVoto == EstadoVoto.AUSENTE || 
+            _estadoVoto == EstadoVoto.PRESENTE,
+            "Error: Estado de voto inválido"
+        );
+        
+        // Obtener el voto anterior
+        EstadoVoto votoAnterior = votosLegisladores[_idSesion][_idLey][msg.sender];
         
         // Actualizar conteo de votos anteriores
-        EstadoVoto votoAnterior = votosLegisladores[_idSesion][_idLey][msg.sender];
-        if (votoAnterior == EstadoVoto.A_FAVOR) ley.votosAFavor--;
-        else if (votoAnterior == EstadoVoto.EN_CONTRA) ley.votosEnContra--;
-        else if (votoAnterior == EstadoVoto.ABSTENCION) ley.abstenciones--;
-        else if (votoAnterior == EstadoVoto.AUSENTE) ley.ausentes--;
+        if (votoAnterior == EstadoVoto.A_FAVOR) {
+            require(ley.votosAFavor > 0, "Error: Contador de votos a favor inconsistente");
+            ley.votosAFavor--;
+        }
+        else if (votoAnterior == EstadoVoto.EN_CONTRA) {
+            require(ley.votosEnContra > 0, "Error: Contador de votos en contra inconsistente");
+            ley.votosEnContra--;
+        }
+        else if (votoAnterior == EstadoVoto.ABSTENCION) {
+            require(ley.abstenciones > 0, "Error: Contador de abstenciones inconsistente");
+            ley.abstenciones--;
+        }
+        else if (votoAnterior == EstadoVoto.AUSENTE) {
+            require(ley.ausentes > 0, "Error: Contador de ausentes inconsistente");
+            ley.ausentes--;
+        }
         
         // Registrar nuevo voto
         votosLegisladores[_idSesion][_idLey][msg.sender] = _estadoVoto;
