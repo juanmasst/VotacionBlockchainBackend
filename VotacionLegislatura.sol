@@ -148,22 +148,31 @@ contract VotacionLegislatura {
         // Obtener el voto anterior
         EstadoVoto votoAnterior = votosLegisladores[_idSesion][_idLey][msg.sender];
         
-        // Actualizar conteo de votos anteriores
-        if (votoAnterior == EstadoVoto.A_FAVOR) {
-            require(ley.votosAFavor > 0, "Error: Contador de votos a favor inconsistente");
-            ley.votosAFavor--;
-        }
-        else if (votoAnterior == EstadoVoto.EN_CONTRA) {
-            require(ley.votosEnContra > 0, "Error: Contador de votos en contra inconsistente");
-            ley.votosEnContra--;
-        }
-        else if (votoAnterior == EstadoVoto.ABSTENCION) {
-            require(ley.abstenciones > 0, "Error: Contador de abstenciones inconsistente");
-            ley.abstenciones--;
-        }
-        else if (votoAnterior == EstadoVoto.AUSENTE) {
-            require(ley.ausentes > 0, "Error: Contador de ausentes inconsistente");
-            ley.ausentes--;
+        // Verificar si el legislador ya había votado antes
+        bool yaHabiaVotado = (
+            votoAnterior == EstadoVoto.A_FAVOR || 
+            votoAnterior == EstadoVoto.EN_CONTRA || 
+            votoAnterior == EstadoVoto.ABSTENCION ||
+            votoAnterior == EstadoVoto.PRESENTE
+        );
+        
+        // Solo actualizar conteo de votos anteriores si ya había votado antes
+        if (yaHabiaVotado) {
+            if (votoAnterior == EstadoVoto.A_FAVOR) {
+                require(ley.votosAFavor > 0, "Error: Contador de votos a favor inconsistente");
+                ley.votosAFavor--;
+            }
+            else if (votoAnterior == EstadoVoto.EN_CONTRA) {
+                require(ley.votosEnContra > 0, "Error: Contador de votos en contra inconsistente");
+                ley.votosEnContra--;
+            }
+            else if (votoAnterior == EstadoVoto.ABSTENCION) {
+                require(ley.abstenciones > 0, "Error: Contador de abstenciones inconsistente");
+                ley.abstenciones--;
+            }
+            else if (votoAnterior == EstadoVoto.PRESENTE) {
+                // PRESENTE no afecta ningún contador de resultados, solo registra asistencia
+            }
         }
         
         // Registrar nuevo voto
@@ -174,6 +183,7 @@ contract VotacionLegislatura {
         else if (_estadoVoto == EstadoVoto.EN_CONTRA) ley.votosEnContra++;
         else if (_estadoVoto == EstadoVoto.ABSTENCION) ley.abstenciones++;
         else if (_estadoVoto == EstadoVoto.AUSENTE) ley.ausentes++;
+        // PRESENTE no afecta ningún contador de resultados
         
         emit VotoRegistrado(_idSesion, _idLey, msg.sender, _estadoVoto);
     }
