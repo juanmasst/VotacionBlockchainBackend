@@ -1,0 +1,519 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idSesion",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idLey",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "titulo",
+          "type": "string"
+        }
+      ],
+      "name": "LeyAgregada",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "legislador",
+          "type": "address"
+        }
+      ],
+      "name": "LegisladorEliminado",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "legislador",
+          "type": "address"
+        }
+      ],
+      "name": "LegisladorRegistrado",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idSesion",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "fecha",
+          "type": "string"
+        }
+      ],
+      "name": "SesionCreada",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idSesion",
+          "type": "uint256"
+        }
+      ],
+      "name": "SesionFinalizada",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idSesion",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "idLey",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "legislador",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum VotacionLegislatura.EstadoVoto",
+          "name": "voto",
+          "type": "uint8"
+        }
+      ],
+      "name": "VotoRegistrado",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "administrador",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_titulo",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_descripcion",
+          "type": "string"
+        }
+      ],
+      "name": "agregarLey",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_fecha",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_descripcion",
+          "type": "string"
+        }
+      ],
+      "name": "crearSesion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_legislador",
+          "type": "address"
+        }
+      ],
+      "name": "eliminarLegislador",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        }
+      ],
+      "name": "finalizarSesion",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "legisladores",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "leyes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "titulo",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "descripcion",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votosAFavor",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votosEnContra",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "abstenciones",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ausentes",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "activa",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        }
+      ],
+      "name": "obtenerCantidadLeyes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "obtenerCantidadSesiones",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_idLey",
+          "type": "uint256"
+        }
+      ],
+      "name": "obtenerLey",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "titulo",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "descripcion",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "activa",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_idLey",
+          "type": "uint256"
+        }
+      ],
+      "name": "obtenerResultadosLey",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "votosAFavor",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "votosEnContra",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "abstenciones",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "ausentes",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_idLey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_legislador",
+          "type": "address"
+        }
+      ],
+      "name": "obtenerVotoLegislador",
+      "outputs": [
+        {
+          "internalType": "enum VotacionLegislatura.EstadoVoto",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_legislador",
+          "type": "address"
+        }
+      ],
+      "name": "registrarLegislador",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_idSesion",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_idLey",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum VotacionLegislatura.EstadoVoto",
+          "name": "_estadoVoto",
+          "type": "uint8"
+        }
+      ],
+      "name": "registrarVoto",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "sesiones",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "fecha",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "descripcion",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "activa",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "votosLegisladores",
+      "outputs": [
+        {
+          "internalType": "enum VotacionLegislatura.EstadoVoto",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+} 
